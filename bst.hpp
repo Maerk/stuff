@@ -7,7 +7,6 @@ private:
     int key;
     node* left;
     node* right;
-    //node* parent;
     node(int val)
     {
         key = val;
@@ -44,10 +43,8 @@ private:
             }
         }
     }
-    void deleteNode(pair<node*,node*> a) //elimino first, second è il parent
+    void deleteNode(pair<node*,node*> a) //delete first, second is parent
     {
-        /*if(a.first == nullptr)
-            return;*/
         if(a.first->left == nullptr && a.first->right == nullptr)
         {
             if(a.first != root)
@@ -65,8 +62,8 @@ private:
         {
             node* tmp = a.first;
             a.second = a.first; //parent
-            a.first = a.first->right; //scendo di uno a dx
-            while(true)//scendo a sx
+            a.first = a.first->right; //down of one right
+            while(true)//down left
             {
                 if(a.first->left == nullptr)
                 {
@@ -85,8 +82,8 @@ private:
         {
             node* tmp = a.first;
             a.second = a.first; //parent
-            a.first = a.first->left; //scendo di uno a sx
-            while(true)//scendo a dx
+            a.first = a.first->left; //down of one left
+            while(true)//down right
             {
                 if(a.first->right == nullptr)
                 {
@@ -103,20 +100,44 @@ private:
         }
         return;
     }
+    void deleteFrom(pair<node*, node*> r)
+    {
+        if(!(r.first->left == nullptr && r.first->right == nullptr))
+        {
+            r.second = r.first;
+            if(r.first->left != nullptr)
+            {
+                r.first = r.first->left;
+                deleteFrom(r);
+            }
+            if(r.first->right != nullptr)
+            {
+                r.first = r.first->right;
+                deleteFrom(r);
+            }
+        }
+        if(r.first != root)
+        {
+            if(r.second->left == r.first)
+                r.second->left = nullptr;
+            else
+                r.second->right = nullptr;
+        }
+        else
+            root = nullptr;
+        return;
+    }
 public:
     bst()
     {
         root = nullptr;
     }
-    ~bst()  //da implementare meglio
+    ~bst()
     {
         pair<node*, node*> r;
-        while(root != nullptr)
-        {
-            r.first = root;
-            r.second = nullptr;
-            deleteNode(r);
-        }
+        r.first = root;
+        r.second = nullptr;
+        deleteFrom(r);
     }
     bool insert(int key)
     {
